@@ -45,6 +45,15 @@ pub(crate) fn parse_data(mut src: &[u8], data: &mut Data) -> Result<(), ParseErr
     Ok(())
 }
 
+pub(crate) fn parse_data_field(mut src: &[u8], data: &mut Data) -> Result<(), ParseError> {
+    if !src.is_empty() {
+        let (tag, value) = parse_field(&mut src).map_err(ParseError::InvalidField)?;
+        data.insert(tag, value);
+    }
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

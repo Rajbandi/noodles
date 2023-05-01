@@ -23,7 +23,7 @@ use std::{
 
 use self::reference_sequence_id::parse_reference_sequence_id;
 use super::read_line;
-use crate::{alignment::Record, Header};
+use crate::{alignment::Record, Header, reader::record::data::parse_data_field};
 
 pub fn read_record<R>(
     reader: &mut R,
@@ -186,9 +186,12 @@ pub(crate) fn parse_record(
     }
 
     record.data_mut().clear();
-    let field = next_field(&mut src);
-    parse_data(field, record.data_mut()).map_err(ParseError::InvalidData)?;
 
+    while !src.is_empty() {
+        let field = next_field(&mut src);
+        parse_data_field(field, record.data_mut()).map_err(ParseError::InvalidData)?;
+    }
+   
     Ok(())
 }
 
